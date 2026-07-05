@@ -25,3 +25,7 @@ ffmpeg-split_completed.txt : ffmpeg-split.sh $(VIDEO_IN)
 .PHONY: clean
 clean:
 	rm --force -- $(VIDEO_OUT) $(COMPLETED) jpg/*.jpg tesseract/*.pdf tesseract/*.txt no-images/*.png no-lines/*.png page-seg-input/*.png combined/*.png
+
+.PHONY: shellcheck
+shellcheck:
+	shellcheck $(SH)
