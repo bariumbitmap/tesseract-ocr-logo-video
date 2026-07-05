@@ -1,11 +1,14 @@
 VIDEO_IN:=warner_home_video.mp4
 VIDEO_OUT:=ocr_warner_home_video.mp4
-COMPLETED:= \
-ffmpeg-split_completed.txt \
+COMPLETED:=ffmpeg-split_completed.txt \
 tesseract_completed.txt \
 pdf2png_completed.txt \
 montage2x2_completed.txt
-SH:=ffmpeg-split.sh tesseract.sh pdf2png.sh montage_2x2.sh ffmpeg-concatenate.sh
+SH:=ffmpeg-split.sh \
+    tesseract.sh \
+    pdf2png.sh \
+    montage_2x2.sh \
+    ffmpeg-concatenate.sh
 
 $(VIDEO_OUT): ffmpeg-concatenate.sh montage2x2_completed.txt
 	./ffmpeg-concatenate.sh combined/ $@ 60
