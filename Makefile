@@ -8,6 +8,8 @@ render_pad_completed.txt \
 pdf2png_completed.txt \
 composite_completed.txt \
 montage2x2_completed.txt
+PNG_DIRS:=no-images no-lines page-seg-input render_txt render_pad composited montage_2x2
+PNG_GLOB:=$(patsubst %,%/*.png,$(PNG_DIRS))
 SH:=ffmpeg-split.sh \
     tesseract.sh \
     pdf2png.sh \
@@ -44,7 +46,7 @@ ffmpeg-split_completed.txt : ffmpeg-split.sh $(VIDEO_IN)
 
 .PHONY: clean
 clean:
-	rm --force -- $(VIDEO_OUT) $(COMPLETED) jpg/*.jpg tesseract/*.pdf tesseract/*.txt no-images/*.png no-lines/*.png page-seg-input/*.png render_txt/*.png render_pad/*.png composited/*.png montage_2x2/*.png
+	rm --force -- $(VIDEO_OUT) $(VIDEO_OUT_NO_AUDIO) $(COMPLETED) jpg/*.jpg tesseract/*.pdf tesseract/*.txt $(PNG_GLOB)
 
 .PHONY: shellcheck
 shellcheck:
