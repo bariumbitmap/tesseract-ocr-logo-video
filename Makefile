@@ -58,3 +58,7 @@ clean:
 .PHONY: shellcheck
 shellcheck:
 	shellcheck $(SH)
+
+.PHONY: apt-install
+apt-install:
+	sudo apt install ffmpeg tesseract-ocr python3 imagemagick-6.q16 poppler-utils
