@@ -36,7 +36,7 @@ render_txt_completed.txt: tesseract_completed.txt render_txt.sh
 	./render_txt.sh tesseract/ render_txt/ $@
 
 boxes_completed.txt: composite_completed.txt tesseract_completed.txt
-	overlay_tsv_boxes composited/ tesseract/ boxes/
+	./overlay_tsv_boxes composited/ tesseract/ boxes/
 	touch "$@"
 
 composite_completed.txt: composite.sh pdf2png_completed.txt

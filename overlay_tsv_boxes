@@ -1,0 +1,189 @@
+#! /usr/bin/env python3
+
+import csv
+import argparse
+import os
+import sys
+import logging
+import cv2
+
+logger = logging.getLogger(__name__)
+
+
+class TesseractResult:
+    fields = (
+        "level",
+        "page_num",
+        "block_num",
+        "par_num",
+        "line_num",
+        "word_num",
+        "left",
+        "top",
+        "width",
+        "height",
+        "conf",
+        "text",
+    )
+    __slots__ = fields
+
+    def __init__(
+        self,
+        level,
+        page_num,
+        block_num,
+        par_num,
+        line_num,
+        word_num,
+        left,
+        top,
+        width,
+        height,
+        conf,
+        text,
+    ):
+        self.level = int(level)
+        self.page_num = int(page_num)
+        self.block_num = int(block_num)
+        self.par_num = int(par_num)
+        self.line_num = int(line_num)
+        self.word_num = int(word_num)
+        self.left = int(left)
+        self.top = int(top)
+        self.width = int(width)
+        self.height = int(height)
+        self.conf = float(conf)
+        self.text = text
+
+    def __repr__(self):
+        args_repr = [
+            "{}={}".format(attr, repr(getattr(self, attr))) for attr in self.fields
+        ]
+        self_repr = self.__class__.__name__ + "({})".format(", ".join(args_repr))
+        return self_repr
+
+    def __str__(self):
+        args_str = [
+            "{}={}".format(attr, repr(getattr(self, attr))) for attr in self.fields
+        ]
+        self_str = self.__class__.__name__ + "({})".format(", ".join(args_str))
+        return self_str
+
+
+def parse_tsv(tsv_path):
+    with open(tsv_path) as fp:
+        reader = csv.reader(fp, delimiter="\t")
+        results = []
+        for i, row in enumerate(reader):
+            if i == 0:
+                logger.info("skipping header row")
+                continue
+            try:
+                result = TesseractResult(*row)
+            except ValueError:
+                logging.error("row {} = {}".format(i + 1, repr(row)))
+            results.append(result)
+    return results
+
+
+def overlay_tsv_boxes(in_dir, tsv_dir, out_dir, thickness=2, skip_blank=True):
+    logger.info("in_dir = {}".format(repr(in_dir)))
+    logger.info("tsv_dir = {}".format(repr(tsv_dir)))
+    logger.info("out_dir = {}".format(repr(out_dir)))
+    for filename in os.listdir(in_dir):
+        logger.debug("filename = {}".format(repr(filename)))
+        path = os.path.join(in_dir, filename)
+        logger.info("path = {}".format(repr(path)))
+        if filename.startswith("."):
+            logger.debug("skipping hidden: {}".format(repr(path)))
+            continue
+        img = cv2.imread(path)
+        h, w, _ = img.shape
+        stem, ext = os.path.splitext(filename)
+        tsv_path = os.path.join(tsv_dir, stem + ".tsv")
+        results = parse_tsv(tsv_path)
+        for i, result in enumerate(results):
+            if result.level != 5:
+                logger.debug("skipping result #{} with level {} for path {}".format(i, result.level, repr(path)))
+                continue
+            elif result.conf == -1:
+                logger.debug("skipping result #{} with confidence -1 for path {}".format(i, repr(path)))
+                continue
+            elif skip_blank and result.text.strip() == '':
+                logger.debug("skipping blank result #{} for path {}".format(i, repr(path)))
+                continue
+            logger.debug("result.text = {}".format(repr(result.text)))
+            x1 = result.left
+            y1 = result.top
+            x2 = x1 + result.width
+            y2 = y1 + result.height
+            logger.debug("x1 = {}, y1 = {}, x2 = {}, y2 = {}".format(x1, y1, x2, y2))
+            green = (0, 255, 0)
+            cv2.rectangle(img, (x1, y1), (x2, y2), green, thickness)
+
+        out_path = os.path.join(out_dir, filename)
+        logger.info("out_path = {}".format(repr(out_path)))
+        cv2.imwrite(out_path, img)
+
+
+def readable_directory(path):
+    if not os.path.isdir(path):
+        raise argparse.ArgumentTypeError("not an existing directory: {}".format(path))
+    if not os.access(path, os.R_OK):
+        raise argparse.ArgumentTypeError("not a readable directory: {}".format(path))
+    return path
+
+
+def writable_directory(path):
+    if not os.path.isdir(path):
+        raise argparse.ArgumentTypeError("not an existing directory: {}".format(path))
+    if not os.access(path, os.W_OK):
+        raise argparse.ArgumentTypeError("not a writable directory: {}".format(path))
+    return path
+
+
+def main():
+    parser = argparse.ArgumentParser(description="This is an example argparse script.")
+    parser.add_argument(
+        "image_dir", type=readable_directory, help="Image directory to read from."
+    )
+    parser.add_argument(
+        "tsv_dir", type=readable_directory, help="TSV directory to read from."
+    )
+    parser.add_argument(
+        "write_dir", type=writable_directory, help="Directory to write to."
+    )
+    parser.add_argument(
+        "--thickness", default=2, help="Line thickness in pixels for bounding box."
+    )
+    parser.add_argument(
+        "--no-skip-blank", default=False, help="Don't skip results with no text."
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="More verbose logging",
+        dest="loglevel",
+        default=logging.WARNING,
+        action="store_const",
+        const=logging.INFO,
+    )
+    parser.add_argument(
+        "-d",
+        "--debug",
+        help="Enable debugging logs",
+        action="store_const",
+        dest="loglevel",
+        const=logging.DEBUG,
+    )
+    args = parser.parse_args()
+    logging.basicConfig(level=args.loglevel)
+    logger.setLevel(args.loglevel)
+
+    skip_blank = not args.no_skip_blank
+    overlay_tsv_boxes(
+        args.image_dir, args.tsv_dir, args.write_dir, thickness=args.thickness, skip_blank=skip_blank)
+
+
+if __name__ == "__main__":
+    main()
