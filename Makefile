@@ -13,6 +13,9 @@ PNG_GLOB:=$(patsubst %,%/*.png,$(PNG_DIRS))
 SH:=ffmpeg-split.sh \
     tesseract.sh \
     pdf2png.sh \
+    composite.sh \
+    render_txt.sh \
+    render_pad.sh \
     montage_2x2.sh \
     ffmpeg-concatenate.sh
 
@@ -20,8 +23,7 @@ $(VIDEO_OUT): $(VIDEO_OUT_NO_AUDIO)
 	ffmpeg -i $< -i $(VIDEO_IN) -map 0:v -map 1:a -c copy -y $@
 
 $(VIDEO_OUT_NO_AUDIO): ffmpeg-concatenate.sh montage2x2_completed.txt
-	ffmpeg -framerate 60 -i montage_2x2/%04d.png -pix_fmt yuv420p -y $@
-	# https://trac.ffmpeg.org/wiki/Slideshow
+	./ffmpeg-concatenate.sh montage_2x2/ $@ 60
 
 montage2x2_completed.txt: montage_2x2.sh render_pad_completed.txt composite_completed.txt pdf2png_completed.txt
 	./montage_2x2.sh montage_2x2/ $@
