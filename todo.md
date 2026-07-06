@@ -1,2 +1,1 @@
-- [ ] Consider switching pdf2png.sh to pdftoppm
-  - e.g. `pdftoppm -png -r 150 input.pdf output_prefix`
+- [x] Switching pdf2png.sh from imagemagick to pdftoppm
