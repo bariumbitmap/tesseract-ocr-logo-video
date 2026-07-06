@@ -10,7 +10,7 @@ for fp in "$dir_in"/*.jpg
 do
     stem=$(basename "$fp" .jpg)
     set +e
-    tesseract "$fp" "$dir_out"/"$stem" -c tessedit_dump_pageseg_images=1
+    tesseract "$fp" "$dir_out"/"$stem" -c tessedit_dump_pageseg_images=1 tsv txt
     set -e
     counter=$((counter+1))
 done

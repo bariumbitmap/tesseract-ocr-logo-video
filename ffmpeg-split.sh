@@ -24,6 +24,6 @@ outdir="$2"
 completion_file="$3"
 mkdir -p -- "$outdir"/
 rm -f -- "$outdir"/*.jpg
-ffmpeg -i "${video}" "${outdir}"/'%04d.jpg'
-#ffmpeg -i "${video}" -vf "select=lt(n\,2)" -vframes 2 "${outdir}"/'%04d.jpg' -loglevel error
+ffmpeg -hide_banner -loglevel error -i "${video}" "${outdir}"/'%04d.jpg'
+#ffmpeg -hide_banner -loglevel error -i "${video}" -vf "select=lt(n\,2)" -vframes 2 "${outdir}"/'%04d.jpg' -loglevel error
 printf "split video '%s' in %s seconds\n" $video $SECONDS > "$completion_file"
