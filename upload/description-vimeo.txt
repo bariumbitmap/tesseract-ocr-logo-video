@@ -1,0 +1,24 @@
+Title:
+[Flashy] Warner Home Video but it's Tesseract OCR debug output
+
+Haters will say it's not spelled WARNER SH OMERBIDE®)
+
+Github repo:
+
+https://github.com/bariumbitmap/tesseract-ocr-logo-video
+
+Loosely based on Kyoobur9000 videos such as "Warner Home Video but I Do Funny Stuff With the Color Look-Up Table" or " Warner Bros. Animation 2026 In the HSL Color Space".
+
+Logo video used for educational purposes. No ownership claim made to derivative works. Released under CC0 (public domain) in applicable jurisdictions.
+
+Tags:
+logoediting, logos, editing, effects, ocr, tesseract, kyoonix, kyoobur9000
+
+Categories:
+Educational, Idents and Animated Logos, Experimental
+
+Copyright:
+Public domain dedication
+
+Link:
+https://vimeo.com/1207558124
