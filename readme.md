@@ -1,6 +1,8 @@
 Uses the debug output of the [Tesseract OCR engine](https://tesseractocr.org/)
 to make a colorful video effect.
 
+![example output](upload/thumbnail.png)
+
 ## Links
 
 https://www.youtube.com/watch?v=MIegPi3e4-Q
