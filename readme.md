@@ -11,7 +11,7 @@ https://vimeo.com/1207558124
 
 https://www.reddit.com/r/logoeditingfandom/comments/1upf5jg/warner_home_video_but_its_tesseract_ocr_debug/
 
-https://github.com/bariumbitmap/tesseract-ocr-logo-video
+https://github.com/tesseract-ocr/tesseract
 
 
 ## Implementation
